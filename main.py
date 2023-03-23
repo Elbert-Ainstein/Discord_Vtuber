@@ -53,7 +53,7 @@ class Bot(commands.Bot):
         prompt = open_file('prompt_chat.txt').replace('<<BLOCK>>', text_block)
         prompt = prompt + '\nEmily:'
         print(prompt)
-        response = gpt3_completion(prompt)
+        response = gpt3_turbo_completion(prompt)
         print('Emily:' , response)
         if(Bot.conversation.count('Emily: ' + response) == 0):
             Bot.conversation.append(f'Emily: {response}')

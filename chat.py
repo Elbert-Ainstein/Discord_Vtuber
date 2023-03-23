@@ -12,19 +12,24 @@ def open_file(filepath):
 
 openai.api_key = apikey
 
+stopSequences = ['Emily:', 
+                 'CHATTER:', 
+                 f'CHATTER{list(range(2, 1001))}: ', 
+                ]
 
-def gpt3_completion(prompt, engine='gpt-3.5-turbo', temp=1, tokens=500, freq_pen=2.0, pres_pen=2.0, stop=['Emily:', 'CHATTER:']):
+
+def gpt3_turbo_completion(prompt, engine='gpt-3.5-turbo', temp=1, tokens=500, freq_pen=2.0, pres_pen=2.0, stop=stopSequences):
     prompt = prompt.encode(encoding='ASCII',errors='ignore').decode()
-    response = openai.Completion.create(
-        engine=engine,
-        prompt=prompt,
+    response = openai.ChatCompletion.create(
+        model=engine,
+        messages=[
+            {'role': 'user', 'content': prompt}    
+        ],
         temperature=temp,
         max_tokens=tokens,
-        frequency_penalty=freq_pen,
-        presence_penalty=pres_pen,
         stop=stop,
-        top_p=0.9)
-    text = response['choices'][0]['text'].strip()
+        )
+    text = response['choices'][0]['message']['content']
     return text
 
 
