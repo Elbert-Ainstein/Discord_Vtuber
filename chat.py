@@ -1,9 +1,11 @@
-import openai
 import os
+import openai
+
 from dotenv import load_dotenv
 load_dotenv()
 
 apikey = os.getenv('KEY')
+
 
 def open_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as infile:
@@ -13,8 +15,10 @@ def open_file(filepath):
 openai.api_key = apikey
 
 
-def gpt3_completion(prompt, engine='gpt-3.5-turbo', temp=1, tokens=500, freq_pen=2.0, pres_pen=2.0, stop=['Emily:', 'CHATTER:']):
-    prompt = prompt.encode(encoding='ASCII',errors='ignore').decode()
+def gpt3_completion(prompt, engine='gpt-3.5-turbo', temp=1, 
+    tokens=500, freq_pen=2.0, pres_pen=2.0, stop=None):
+    stop = stop or ['Emily:', 'CHATTER:']
+    prompt = prompt.encode(encoding='ASCII', errors='ignore').decode()
     response = openai.Completion.create(
         engine=engine,
         prompt=prompt,
@@ -26,9 +30,3 @@ def gpt3_completion(prompt, engine='gpt-3.5-turbo', temp=1, tokens=500, freq_pen
         top_p=0.9)
     text = response['choices'][0]['text'].strip()
     return text
-
-
-
-
-
-

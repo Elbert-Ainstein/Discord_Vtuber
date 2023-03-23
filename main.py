@@ -1,16 +1,22 @@
-from twitchio.ext import commands
-from chat import *
-from google.cloud import texttospeech_v1beta1 as texttospeech
-import os 
-os.add_dll_directory(r'C:\Program Files\VideoLAN\VLC')
-import vlc
 import time
-import nltk
+import os
 from dotenv import load_dotenv
+import nltk
+import vlc
+
+from twitchio.ext import commands
+from google.cloud import texttospeech_v1beta1 as texttospeech
+from chat import gpt3_completion, open_file
+
+try:
+    os.add_dll_directory(r'C:\Program Files\VideoLAN\VLC')
+except AttributeError:
+    pass
 
 load_dotenv()
 
 twitch_token = os.getenv('TOKEN')
+
 
 class Bot(commands.Bot):
 
@@ -20,8 +26,9 @@ class Bot(commands.Bot):
         # Initialise our Bot with our access token, prefix and a list of channels to join on boot...
         # prefix can be a callable, which returns a list of strings or a string...
         # initial_channels can also be a callable which returns a list of strings...
-        
-        super().__init__(token=twitch_token, prefix='!', initial_channels=['elbertoainstein'])
+
+        super().__init__(token=twitch_token, prefix='!',
+                         initial_channels=['elbertoainstein'])
 
     async def event_ready(self):
         # Notify us when everything is ready!
@@ -31,7 +38,8 @@ class Bot(commands.Bot):
     async def event_message(self, message):
         # Messages with echo set to True are messages sent by the bot...
         # For now we just want to ignore them...
-        if message.echo:
+        # Also check if the message is too long
+        if message.echo or len(message.content) > 70:
             return
 
         # download the words corpus
@@ -40,9 +48,7 @@ class Bot(commands.Bot):
         # Check if the message contains english words
         if not any(word in message.content for word in nltk.corpus.words.words()):
             return
-        # Check if the message is too long
-        if len(message.content) > 70:
-            return
+
         print('------------------------------------------------------')
         print(message.content)
         print(message.author.name)
@@ -50,14 +56,14 @@ class Bot(commands.Bot):
 
         Bot.conversation.append(f'CHATTER: {message.content}')
         text_block = '\n'.join(Bot.conversation)
-        prompt = open_file('prompt_chat.txt').replace('<<BLOCK>>', text_block)
-        prompt = prompt + '\nEmily:'
+        prompt = open_file('prompt_chat.txt') + text_block
+        prompt += '\nDOGGIEBRO: '
         print(prompt)
         response = gpt3_completion(prompt)
-        print('Emily:' , response)
-        if(Bot.conversation.count('Emily: ' + response) == 0):
-            Bot.conversation.append(f'Emily: {response}')
-        
+        print('DOGGIEBRO: ', response)
+        if not Bot.conversation.count('DOGGIEBRO: ' + response):
+            Bot.conversation.append(f'DOGGIEBRO: {response}')
+
         client = texttospeech.TextToSpeechClient()
 
         response = message.content + "? " + response
@@ -70,81 +76,61 @@ class Bot(commands.Bot):
             response_counter += 1
         ssml_text += '</speak>'
 
-        input_text = texttospeech.SynthesisInput(ssml = ssml_text)
+        input_text = texttospeech.SynthesisInput(ssml=ssml_text)
 
         # Note: the voice can also be specified by name.
         # Names of voices can be retrieved with client.list_voices().
         voice = texttospeech.VoiceSelectionParams(
             language_code="en-GB",
-            name= "en-GB-Wavenet-B",
+            name="en-GB-Wavenet-B",
             ssml_gender=texttospeech.SsmlVoiceGender.FEMALE,
         )
 
-        audio_config = texttospeech.AudioConfig(    
+        audio_config = texttospeech.AudioConfig(
             audio_encoding=texttospeech.AudioEncoding.MP3,
         )
-        
 
         response = client.synthesize_speech(
-            request={"input": input_text, "voice": voice, "audio_config": audio_config, "enable_time_pointing": ["SSML_MARK"]}
+            request={"input": input_text, "voice": voice,
+                     "audio_config": audio_config, "enable_time_pointing": ["SSML_MARK"]}
         )
-
 
         # The response's audio_content is binary.
         with open("output.mp3", "wb") as out:
             out.write(response.audio_content)
 
-        audio_file = os.path.dirname(__file__) + '\output.mp3'
-        media = vlc.MediaPlayer(audio_file)
-        media.play()
-        #playsound(audio_file, winsound.SND_ASYNC)
-
+        vlc.MediaPlayer('output.mp3').play()
+        # playsound(audio_file, winsound.SND_ASYNC)
 
         count = 0
-        current = 0
         for i in range(len(response.timepoints)):
             count += 1
-            current += 1
-            with open("output.txt", "a", encoding="utf-8") as out:
-                out.write(mark_array[int(response.timepoints[i].mark_name)] + " ")
+            with open("output.txt", "a", encoding='utf-8') as out:
+                out.write(
+                    mark_array[int(response.timepoints[i].mark_name)] + " ")
             if i != len(response.timepoints) - 1:
                 total_time = response.timepoints[i + 1].time_seconds
                 time.sleep(total_time - response.timepoints[i].time_seconds)
-            if current == 25:
-                    open('output.txt', 'w', encoding="utf-8").close()
-                    current = 0
-                    count = 0
+            if count == 25:
+                open('output.txt', 'w', encoding='utf-8').close()
+                count = 0
             elif count % 7 == 0:
-                with open("output.txt", "a", encoding="utf-8") as out:
+                with open("output.txt", "a", encoding='utf-8') as out:
                     out.write("\n")
         time.sleep(2)
         open('output.txt', 'w').close()
 
-
-
         # Print the contents of our message to console...
-        
+
         print('------------------------------------------------------')
-        os.remove(audio_file)
+        os.remove('output.mp3')
 
         # Since we have commands and are overriding the default `event_message`
         # We must let the bot know we want to handle and invoke our commands...
         await self.handle_commands(message)
 
-    @commands.command()
-    async def hello(self, ctx: commands.Context):
-        # Here we have a command hello, we can invoke our command with our prefix and command name
-        # e.g ?hello
-        # We can also give our commands aliases (different names) to invoke with.
-
-        # Send a hello back!
-        # Sending a reply back to the channel is easy... Below is an example.
-        await ctx.send(f'Hello {ctx.author.name}!')
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'twitchtuber-d5f31fbeec60.json'
 bot = Bot()
 bot.run()
 # bot.run() is blocking and will stop execution of any below code here until stopped or closed.
-
-
-
