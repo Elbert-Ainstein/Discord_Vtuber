@@ -51,12 +51,12 @@ class Bot(commands.Bot):
         Bot.conversation.append(f'CHATTER: {message.content}')
         text_block = '\n'.join(Bot.conversation)
         prompt = open_file('prompt_chat.txt').replace('<<BLOCK>>', text_block)
-        prompt = prompt + '\nDOGGIEBRO:'
+        prompt = prompt + '\nEmily:'
         print(prompt)
         response = gpt3_completion(prompt)
-        print('DOGGIEBRO:' , response)
-        if(Bot.conversation.count('DOGGIEBRO: ' + response) == 0):
-            Bot.conversation.append(f'DOGGIEBRO: {response}')
+        print('Emily:' , response)
+        if(Bot.conversation.count('Emily: ' + response) == 0):
+            Bot.conversation.append(f'Emily: {response}')
         
         client = texttospeech.TextToSpeechClient()
 

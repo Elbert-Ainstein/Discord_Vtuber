@@ -13,7 +13,7 @@ def open_file(filepath):
 openai.api_key = apikey
 
 
-def gpt3_completion(prompt, engine='text-davinci-003', temp=0.9, tokens=400, freq_pen=2.0, pres_pen=2.0, stop=['DOGGIEBRO:', 'CHATTER:']):
+def gpt3_completion(prompt, engine='gpt-3.5-turbo', temp=1, tokens=500, freq_pen=2.0, pres_pen=2.0, stop=['Emily:', 'CHATTER:']):
     prompt = prompt.encode(encoding='ASCII',errors='ignore').decode()
     response = openai.Completion.create(
         engine=engine,
@@ -22,7 +22,8 @@ def gpt3_completion(prompt, engine='text-davinci-003', temp=0.9, tokens=400, fre
         max_tokens=tokens,
         frequency_penalty=freq_pen,
         presence_penalty=pres_pen,
-        stop=stop)
+        stop=stop,
+        top_p=0.9)
     text = response['choices'][0]['text'].strip()
     return text
 
