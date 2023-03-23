@@ -6,7 +6,7 @@ import vlc
 
 from twitchio.ext import commands
 from google.cloud import texttospeech_v1beta1 as texttospeech
-from chat import gpt3_completion, open_file
+from chat import gpt3_turbo_completion, open_file
 
 try:
     os.add_dll_directory(r'C:\Program Files\VideoLAN\VLC')
@@ -59,11 +59,11 @@ class Bot(commands.Bot):
         prompt = open_file('prompt_chat.txt') + text_block
         prompt += '\nDOGGIEBRO: '
         print(prompt)
-        response = gpt3_completion(prompt)
-        print('DOGGIEBRO: ', response)
-        if not Bot.conversation.count('DOGGIEBRO: ' + response):
-            Bot.conversation.append(f'DOGGIEBRO: {response}')
-
+        response = gpt3_turbo_completion(prompt)
+        print('Emily:' , response)
+        if not Bot.conversation.count('Emily: ' + response):
+            Bot.conversation.append(f'Emily: {response}')
+            
         client = texttospeech.TextToSpeechClient()
 
         response = message.content + "? " + response
