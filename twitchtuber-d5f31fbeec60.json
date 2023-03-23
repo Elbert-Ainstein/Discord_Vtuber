@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "twitchtuber",
+  "private_key_id": "d5f31fbeec60b85d1033efc29b8783e1cdaea110",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9NG1Lq1dNs4Ba\njYdO+EfB/dVV8ONEQghgF4t49FVUlp+GiRYMesyru3aZCWVc1wDp6HJeNxxOUVuv\nVY7mRBWMBdRLe79NryNhuAiy7oiu9Fznx0c5bpxOajwdgyPGWnIUKv35qv4mQfkx\nl7LiCFUcuUmzNLguUOaJbswY9sF9DvUAtri+x7LFZWSAbLgyY74UtqofbknuITmu\nAU4dnXqSeSq4DrVmscEhwt3aUNeZ6sxjm9wR2nHde/BVEZFgmea/uq4C/IEvOP0q\nlygr+ch9ZxYfliF2/3kocQZKt7ZDEWNlT/2ztOG05ipa0elYNUq8tqAqGXqN4ym6\n+qex0nLRAgMBAAECggEAAMd/AAgks/tMEmWxi8M4dHEFIZDXyRMdaG4yrlzs+nna\n6evexCn2vtfCUe8vnZ7GgouNnsBvgA2mchg2wvXj0/jidb8hYF4IzMW8WJRSN/Ec\nt2tjDu1IxfR6xjEzcJd9xl2iG7tbosMhzPoiC/uRzZogVqewbsxnN9HVyqcaGaDT\nrLtgqJR0rABOJjneNp22OSJ7pf2XQxr9uXsFwrSoRpDKfPOR/AUrgWnFbQFviGpC\nh26Vw++9r+Bjkg1eQiTbxKUjC18clZ4pXkPViPT47KYhwtiRxWp2VfSWx4YBAom2\ndRzfDoGiM0f4OoX0WsZPbc/FF/Wyd+1kdzv/Euk8oQKBgQD2+sP+meCIsGICtD3N\nyYKe1YeOUiYEKmEogfraF6Uv0TXBYGGpMFEGk40DcpGTssFVY03L/8tdPYItgFC9\nkqvQXk0XgZNAt0j4ttTeAGtZKbvfdJlAzqq60I4CFs/KINAiOJxIzbxD+Kl2v4DK\n4oo7Uatk6XYRNVPtRMU55DfeaQKBgQDEHXkY447tfj1LewLOCmGlqJl3nlAYH4E6\nQD/OT68lwloN7kfVQUYDgN+iQUPef4JCyvNwYWE0A42gRTJXNsC3IYBO9g07K4+z\nTFgONnS8xvs8PmvdWiNBgPFKacODS8X3kXZfyzxMY6vtDy/FF8F+Q+c25wKF0LtN\nevySRM60KQKBgDDYHSTgB8DgqTGBtetZ2+RPtHRYGL6gJwDc2+B/5qJTTL9GsWnF\nbXDQg4XYBaRhKM0bS4p5tx1kibc39j/XnvUhgTuR265j0SGm/ug8yv4iO86Qf7KK\nbMdvcXZGTqfZ32+1JGtdjMsghVs/ulflf5MFrtDRPxFeK4/0FtFBKi9pAoGALX50\n0BxB1MAbMf5YOTnZSxegekpEZEQyszOiWZbMl6LNRzwGd+cLedaUikw/lUbZDeuM\nq347kVhdq1dCBU9TR2hDHo4fpaFGVZ6ZMrrZO82hDGmilhfJ4/EoiE2eqD+UrgiV\ngEViOIpKoNSMDVmkbkkMQwU15Zr1SFUGcFv743kCgYEAl1TCgwDHUF7GU+DjYFgU\nNUCCBzmOe5ixcr5PAKhY2uHTDUlpjgp06LM7di1nSqjtxeOHQ4n/jzmzMqBMgpfr\nzkJBkquIxCKZB7J5ydpeiie95VceiEphAbBFQRixmXEjs8spX9NmVNyjPFKyBZ1M\nUmxi2TaLrIwDCKsYeEwpSMM=\n-----END PRIVATE KEY-----\n",
+  "client_email": "twitchbot@twitchtuber.iam.gserviceaccount.com",
+  "client_id": "117054617507416755828",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/twitchbot%40twitchtuber.iam.gserviceaccount.com"
+}
