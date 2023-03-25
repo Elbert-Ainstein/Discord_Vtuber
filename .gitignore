@@ -1,4 +1,6 @@
 .env
 venv
-__pycache
-twitchtuber-d5f31fbeec60
+*.pycache
+.vscode/
+*.json
+output.*
