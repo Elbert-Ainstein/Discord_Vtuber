@@ -1,3 +1,4 @@
+"""
 aiohttp==3.8.4
 aiosignal==1.3.1
 async-timeout==4.0.2
@@ -40,11 +41,15 @@ soupsieve==2.4
 tifffile==2022.10.10
 
 
-twitchio==2.5.0
+twitchio==2.6.0
 typing_extensions==4.4.0
 
 
 wincertstore==0.2
 yarl==1.8.2
 
+python-dotenv
+"""
+discord.py
+openai
 python-dotenv
