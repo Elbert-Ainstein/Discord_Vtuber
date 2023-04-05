@@ -16,13 +16,15 @@ google-cloud-texttospeech
 
 imageio==2.25.0
 iso8601==1.1.0
-
 multidict==6.0.4
 networkx==3.0
 numpy==1.24.1
 nltk
+ffmpeg-python
+pynacl
 discord.py
 python-dotenv
+ipython
 openai==0.27.2
 opencv-python==4.7.0.68
 packaging==23.0

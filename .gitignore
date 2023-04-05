@@ -1,6 +1,6 @@
 .env
 venv
-*.pycache
+__pycache__
 .vscode/
 *.json
 output.*

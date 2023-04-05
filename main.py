@@ -4,6 +4,13 @@ import os
 from gtts import gTTS
 import discord
 from discord.ext import commands
+import json 
+import io
+import requests
+from IPython.display import Audio, display
+from elevenlabslib.helpers import *
+from elevenlabslib import *
+import time
 
 
 #from google.cloud import texttospeech_v1beta1 as texttospeech
@@ -12,8 +19,14 @@ from chat import gpt3_turbo_completion
 
 
 token = os.getenv('TOKEN')
+labKey = os.getenv('SPEECH_KEY')
+
+user = ElevenLabsUser(labKey)
+voice = user.get_voices_by_name("Rachel")[0]
+
 
 bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
+
 with open('prompt_chat.txt') as f:
     conversation = [{"role": "user", "content": f.read()}]
 vc = None
@@ -23,7 +36,7 @@ async def on_ready():
     # Notify us when everything is ready!
     # We are logged in and ready to chat and use commands...
     print(f'Logged in as | {bot.user.name}')
-    vc = await bot.get_channel(889411465788948490).connect()
+    vc = await bot.get_channel(889411465788948491).connect()
     print(vc)
 #nltk.download('words')
 
@@ -38,81 +51,47 @@ async def on_message(message):
         return
     
     # Check if the message contains english words
-#    if not any(word in message.content for word in nltk.corpus.words.words()):
+#    if not any(word in message.con tent for word in nltk.corpus.words.words()):
 #        return
     conversation+=[{"role": "user", "content": message.author.name+": "+message.content}]
     response = gpt3_turbo_completion(conversation=conversation)
-    await message.reply(content=response)
+    await message.channel.send(content=response)
     conversation+=[{"role":"assistant", "content":response}]
-    tts = gTTS(response, lang='en', tld='us')
-    tts.save('tmp.mp3')
-    vc.play(discord.FFmpegPCMAudio('tmp.mp3',executable=os.getenv('FFMPEG_LOC')))
+    
+    with open('tmp.mp3', 'wb') as f:
+        f.write(voice.generate_audio_bytes(response))
+    
+    time.sleep(2)
+    if response != None:        
+        vc.play(discord.FFmpegPCMAudio('tmp.mp3'))
+    print(user.get_history_items())
+    
+    
+    # tts = gTTS(response, lang='en', tld='us')
+    # tts.save('tmp.mp3')
+     
 
-    """
-        client = texttospeech.TextToSpeechClient()
-
-        response = message.content + "? " + response
-        ssml_text = '<speak>'
-        response_counter = 0
-        mark_array = []
-        for s in response.split(' '):
-            ssml_text += f'<mark name="{response_counter}"/>{s}'
-            mark_array.append(s)
-            response_counter += 1
-        ssml_text += '</speak>'
-
-        input_text = texttospeech.SynthesisInput(ssml=ssml_text)
-
-        # Note: the voice can also be specified by name.
-        # Names of voices can be retrieved with client.list_voices().
-        voice = texttospeech.VoiceSelectionParams(
-            language_code="en-GB",
-            name="en-GB-Wavenet-B",
-            ssml_gender=texttospeech.SsmlVoiceGender.FEMALE,
-        )
-
-        audio_config = texttospeech.AudioConfig(
-            audio_encoding=texttospeech.AudioEncoding.MP3,
-        )
-
-        response = client.synthesize_speech(
-            request={"input": input_text, "voice": voice,
-                     "audio_config": audio_config, "enable_time_pointing": ["SSML_MARK"]}
-        )
-
-        # The response's audio_content is binary.
-        with open("output.mp3", "wb") as out:
-            out.write(response.audio_content)
-
-        # playsound(audio_file, winsound.SND_ASYNC)
-
-        count = 0
-        for i in range(len(response.timepoints)):
-            count += 1
-            with open("output.txt", "a", encoding='utf-8') as out:
-                out.write(
-                    mark_array[int(response.timepoints[i].mark_name)] + " ")
-            if i != len(response.timepoints) - 1:
-                total_time = response.timepoints[i + 1].time_seconds
-                time.sleep(total_time - response.timepoints[i].time_seconds)
-            if count == 25:
-                open('output.txt', 'w', encoding='utf-8').close()
-                count = 0
-            elif count % 7 == 0:
-                with open("output.txt", "a", encoding='utf-8') as out:
-                    out.write("\n")
+    # res = requests.post(
+    #     "https://api.elevenlabs.io/v1/text-to-speect/21m00Tcm4TlvDq8ikWAM",
+    #     headers = {
+    #         'accept': 'audio/mpeg',
+    #         'xi-api-key': labKey,
+    #         'Content-Type': 'application/json',
+    #     },
+    #     json = {
+    #         'text': response
+    #     }
+    # )
+    
+    
+    
+    # with open('tmp.mp3', 'wb') as f:
+    #     f.write(res.content)
         
-        time.sleep(2)
-        open('output.txt', 'w', encoding='utf-8').close()
+    # promptResSpeech = 'tmp.mp3'
+    # display(Audio(promptResSpeech, autoplay=True))
+    
+    
 
-        # Print the contents of our message to console...
-
-        print('------------------------------------------------------')
-        os.remove('output.mp3')
-        """
-
-
-
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'twitchtuber-d5f31fbeec60.json'
 bot.run(token)
 # bot.run() is blocking and will stop execution of any below code here until stopped or closed.
