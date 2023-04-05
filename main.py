@@ -1,48 +1,54 @@
 import time
 import os
-import nltk
+#import nltk
+from gtts import gTTS
 import discord
 from discord.ext import commands
 
+
 #from google.cloud import texttospeech_v1beta1 as texttospeech
-from chat import gpt3_turbo_completion, open_file
+from chat import gpt3_turbo_completion
 
 
 
 token = os.getenv('TOKEN')
 
-bot = commands.Bot(command_prefix='!', intents=discord.Intents.default())
-conversation = []
-
+bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
+with open('prompt_chat.txt') as f:
+    conversation = [{"role": "user", "content": f.read()}]
+vc = None
 @bot.event    
 async def on_ready():
+    global vc
     # Notify us when everything is ready!
     # We are logged in and ready to chat and use commands...
     print(f'Logged in as | {bot.user.name}')
-nltk.download('words')
+    vc = await bot.get_channel(889411465788948490).connect()
+    print(vc)
+#nltk.download('words')
 
 @bot.event
 async def on_message(message):
+    global conversation, vc
         # Messages with echo set to True are messages sent by the bot...
         # For now we just want to ignore them...
         # Also check if the message is too long
-    print("e")
-    if len(message.content) > 70:
+    
+    if len(message.content) > 70 or message.author.id == bot.user.id:
         return
-
+    
     # Check if the message contains english words
 #    if not any(word in message.content for word in nltk.corpus.words.words()):
 #        return
-
-    conversation.append(f'CHATTER: {message.content}')
-    text_block = '\n'.join(conversation)
-    prompt = open_file('prompt_chat.txt') 
-    prompt += message.author.name+': '
-    response = gpt3_turbo_completion(prompt)
+    conversation+=[{"role": "user", "content": message.author.name+": "+message.content}]
+    response = gpt3_turbo_completion(conversation=conversation)
     await message.reply(content=response)
-    if not conversation.count('Emily: ' + response):
-        conversation.append(f'Emily: {response}')
-        """
+    conversation+=[{"role":"assistant", "content":response}]
+    tts = gTTS(response, lang='en', tld='us')
+    tts.save('tmp.mp3')
+    vc.play(discord.FFmpegPCMAudio('tmp.mp3',executable=os.getenv('FFMPEG_LOC')))
+
+    """
         client = texttospeech.TextToSpeechClient()
 
         response = message.content + "? " + response
@@ -95,7 +101,7 @@ async def on_message(message):
             elif count % 7 == 0:
                 with open("output.txt", "a", encoding='utf-8') as out:
                     out.write("\n")
-        """
+        
         time.sleep(2)
         open('output.txt', 'w', encoding='utf-8').close()
 
@@ -103,6 +109,7 @@ async def on_message(message):
 
         print('------------------------------------------------------')
         os.remove('output.mp3')
+        """
 
 
 

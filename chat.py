@@ -14,22 +14,11 @@ def open_file(filepath):
 
 openai.api_key = apikey
 
-stopSequences = ['Emily:',
-                 'CHATTER:', 
-                 f'CHATTER{list(range(2, 1001))}: ', 
-                ]
-
-def gpt3_turbo_completion(prompt, engine='gpt-3.5-turbo', temp=1, tokens=500, stop=None):
-    stop = stop or stopSequences
-    prompt = prompt.encode(encoding='ASCII',errors='ignore').decode()
-    response = openai.ChatCompletion.create(
+def gpt3_turbo_completion(conversation, engine='gpt-3.5-turbo', temp=1, tokens=500, stop=None, user=None):
+    return openai.ChatCompletion.create(
         model=engine,
-        messages=[
-            {'role': 'user', 'content': prompt}
-        ],
+        messages=conversation,
         temperature=temp,
         max_tokens=tokens,
-        stop=stop,
-        )
-    text = response['choices'][0]['message']['content']
-    return text
+        stop=stop
+        )['choices'][0]['message']['content']
