@@ -1,7 +1,5 @@
 import time
 import os
-#import nltk
-from gtts import gTTS
 import discord
 from discord.ext import commands
 import json 
@@ -12,8 +10,6 @@ from elevenlabslib.helpers import *
 from elevenlabslib import *
 import time
 
-
-#from google.cloud import texttospeech_v1beta1 as texttospeech
 from chat import gpt3_turbo_completion
 
 
@@ -38,7 +34,6 @@ async def on_ready():
     print(f'Logged in as | {bot.user.name}')
     vc = await bot.get_channel(889411465788948491).connect()
     print(vc)
-#nltk.download('words')
 
 @bot.event
 async def on_message(message):
@@ -65,33 +60,6 @@ async def on_message(message):
     if response != None:        
         vc.play(discord.FFmpegPCMAudio('tmp.mp3'))
     print(user.get_history_items())
-    
-    
-    # tts = gTTS(response, lang='en', tld='us')
-    # tts.save('tmp.mp3')
-     
 
-    # res = requests.post(
-    #     "https://api.elevenlabs.io/v1/text-to-speect/21m00Tcm4TlvDq8ikWAM",
-    #     headers = {
-    #         'accept': 'audio/mpeg',
-    #         'xi-api-key': labKey,
-    #         'Content-Type': 'application/json',
-    #     },
-    #     json = {
-    #         'text': response
-    #     }
-    # )
-    
-    
-    
-    # with open('tmp.mp3', 'wb') as f:
-    #     f.write(res.content)
-        
-    # promptResSpeech = 'tmp.mp3'
-    # display(Audio(promptResSpeech, autoplay=True))
-    
-    
 
 bot.run(token)
-# bot.run() is blocking and will stop execution of any below code here until stopped or closed.
