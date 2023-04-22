@@ -23,7 +23,7 @@ voice = user.get_voices_by_name("Rachel")[0]
 
 bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
 
-with open('prompt_chat.txt') as f:
+with open('prompt_chat.txt', encoding="utf-8") as f:
     conversation = [{"role": "user", "content": f.read()}]
 vc = None
 @bot.event    
@@ -50,6 +50,11 @@ async def on_message(message):
 #        return
     conversation+=[{"role": "user", "content": message.author.name+": "+message.content}]
     response = gpt3_turbo_completion(conversation=conversation)
+    
+    response = response.replace("Jesus: ", '')
+    
+    print(response)
+    
     await message.channel.send(content=response)
     conversation+=[{"role":"assistant", "content":response}]
     
